@@ -11,6 +11,9 @@ VALUES (
 -- name: GetUser :one
 select * from users where name = $1 LIMIT 1;
 
+-- name: GetUserName :one
+select name from users where id = $1 LIMIT 1;
+
 -- name: UserExists :one
 select EXISTS(select 1 from users  where name = $1) ;
 

@@ -28,7 +28,7 @@ func addFeed(s *state, cmd command) error {
 		}
 	}
 
-	params := database.CreateFeedParams{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: time.Now(), Name: cmd.args[0], UserID: currentUserId}
+	params := database.CreateFeedParams{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: time.Now(), Name: cmd.args[0], UserID: currentUserId, Url: cmd.args[1]}
 
 	feed, err := s.db.CreateFeed(context.Background(), params)
 	if err != nil {
@@ -40,8 +40,7 @@ func addFeed(s *state, cmd command) error {
 	return nil
 }
 
-func getAllFeeds(s *state, cmd command) error
-{
+func getAllFeeds(s *state, cmd command) error {
 
 	feeds, err := s.db.GetAllFeeds(context.Background())
 	if err != nil {
@@ -49,7 +48,11 @@ func getAllFeeds(s *state, cmd command) error
 	}
 
 	for _, feed := range feeds {
-		fmt.Printf("%v : %v : %v : %v", feed.ID, feed.UserID, feed.CreatedAt, feed.Name)
+		feedUsername, err := s.db.GetUserName(context.Background(), feed.UserID)
+		if err != nil {
+			return err
+		}
+		fmt.Printf("\n[%v : %v : %v : %v]\n", feed.ID, feedUsername, feed.Url, feed.Name)
 	}
 	return nil
 }

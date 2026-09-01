@@ -12,3 +12,6 @@ VALUES (
 
 -- name: GetAllFeeds :many
 select * from feeds;
+
+-- name: ClearFeeds :exec
+delete from feeds;

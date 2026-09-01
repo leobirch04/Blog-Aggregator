@@ -46,5 +46,12 @@ func handlerReset(s *state, cmd command) error {
 		return err
 	}
 	fmt.Println("All Users Cleared...")
+
+	err = s.db.ClearFeeds(context.Background())
+	if err != nil {
+		return err
+	}
+	fmt.Println("All Feeds Cleared...")
+
 	return nil
 }
