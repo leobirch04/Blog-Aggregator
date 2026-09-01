@@ -9,10 +9,13 @@ VALUES (
     RETURNING *;
 
 -- name: GetUser :one
-select * from users where id = $1 LIMIT 1;
+select * from users where name = $1 LIMIT 1;
 
 -- name: UserExists :one
 select EXISTS(select 1 from users  where name = $1) ;
 
 -- name: ClearUsers :exec
 delete from users;
+
+-- name: GetAllUsers :many
+select * from users;

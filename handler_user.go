@@ -26,3 +26,22 @@ func handlerLogin(s *state, cmd command) error {
 
 	return nil
 }
+
+func handlerGetAllUsers(s *state, cmd command) error {
+	if len(cmd.args) != 0 {
+		return errors.New("no arguments expected")
+	}
+
+	users, err := s.db.GetAllUsers(context.Background())
+	if err != nil {
+		return err
+	}
+	for _, user := range users {
+		current := ""
+		if s.cfg.CurrentUserName == user.Name {
+			current = "(current)"
+		}
+		fmt.Printf("* %v %v", user.Name, current)
+	}
+	return nil
+}
