@@ -13,5 +13,10 @@ VALUES (
 -- name: GetAllFeeds :many
 select * from feeds;
 
+-- name: GetFeedByURL :one
+select * from feeds where url = $1 LIMIT 1;
+
+
+
 -- name: ClearFeeds :exec
 delete from feeds;

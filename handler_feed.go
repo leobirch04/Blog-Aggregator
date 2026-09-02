@@ -10,25 +10,12 @@ import (
 	"github.com/google/uuid"
 )
 
-func addFeed(s *state, cmd command) error {
+func addFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.args) != 2 {
 		return errors.New("2 arguments expected")
 	}
 
-	userName := s.cfg.CurrentUserName
-	userList, err := s.db.GetAllUsers(context.Background())
-	if err != nil {
-		return err
-	}
-	var currentUserId uuid.UUID
-
-	for _, user := range userList {
-		if user.Name == userName {
-			currentUserId = user.ID
-		}
-	}
-
-	params := database.CreateFeedParams{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: time.Now(), Name: cmd.args[0], UserID: currentUserId, Url: cmd.args[1]}
+	params := database.CreateFeedParams{ID: uuid.New(), CreatedAt: time.Now(), UpdatedAt: time.Now(), Name: cmd.args[0], UserID: user.ID, Url: cmd.args[1]}
 
 	feed, err := s.db.CreateFeed(context.Background(), params)
 	if err != nil {
@@ -37,6 +24,18 @@ func addFeed(s *state, cmd command) error {
 
 	fmt.Printf("%v : %v : %v : %v", feed.ID, feed.UserID, feed.CreatedAt, feed.Name)
 
+	followParams := database.CreateFeedFollowParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		UserID:    user.ID,
+		FeedID:    feed.ID,
+	}
+
+	_, err = s.db.CreateFeedFollow(context.Background(), followParams)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
